@@ -6,7 +6,6 @@ Licensed under the GNU AGPL 3.0"""
 )
 
 # Standard library imports
-import asyncio
 import gc
 import time
 
@@ -39,12 +38,11 @@ async def clearOldLetters():
     gc.collect()
 
 
-
 # Task to send out finished emails to Santa (this ensures that two emails don't clash with each other)
 @tasks.loop()
 async def sendFinishedLetters():
     global finishedLetters
-    
+
     for user, letter in list(finishedLetters.items()):
         await client.get_channel(letter[0]).send(letter[1])
         for line in letter[2]:
@@ -121,17 +119,25 @@ async def on_message(message):
                 )
             else:
                 await message.channel.send(
-                    "> {}, you are currently writing a letter to Santa. Finish it up first or cancel it by typing `es!cancel` before making a new one.".format(message.author.mention)
+                    "> {}, you are currently writing a letter to Santa. Finish it up first or cancel it by typing `es!cancel` before making a new one.".format(
+                        message.author.mention
+                    )
                 )
 
         elif currentCommand == "cancel":
             try:
                 del wipLetters[message.author.id]
-                await message.channel.send("> {}, your responses have been cleared.".format(message.author.mention))
+                await message.channel.send(
+                    "> {}, your responses have been cleared.".format(
+                        message.author.mention
+                    )
+                )
 
             except:
                 await message.channel.send(
-                    "> {}, you are not currently sending a letter to Santa.".format(message.author.mention)
+                    "> {}, you are not currently sending a letter to Santa.".format(
+                        message.author.mention
+                    )
                 )
 
         elif currentCommand == "help":
@@ -150,7 +156,7 @@ async def on_message(message):
             await message.channel.send(
                 """> **Email Santa Bot**
 > Version 1.0.0
-> Discord Bot by Félix An - <https://www.felixan.tk/> - Copyright © 2020 Félix An. Licensed under the GNU AGPL 3.0. Source code: link here
+> Discord Bot by Félix An - <https://www.felixan.tk/> - Copyright © 2020 Félix An. Licensed under the GNU AGPL 3.0. Source code: <https://github.com/fffelix-jan/emailSanta-discordbot>
 > Uses the open source Python library "emailsanta", licensed under the GNU AGPL 3.0, also by Félix An: <https://github.com/fffelix-jan/emailsanta-py>
 > Replies provided by Alan Kerr's "emailSanta.com" - <https://www.emailsanta.com/> - Copyright © 1997-2020 emailSanta.com Inc.
 > 
@@ -213,7 +219,9 @@ async def on_message(message):
                     if message.content == "SKIP!":
                         wipLetters[message.author.id]["letter_argv"].append("")
                     else:
-                        wipLetters[message.author.id]["letter_argv"].append(message.content)
+                        wipLetters[message.author.id]["letter_argv"].append(
+                            message.content
+                        )
                 else:
                     wipLetters[message.author.id]["letter_argv"].append(message.content)
 
@@ -225,10 +233,10 @@ async def on_message(message):
                     while replySplit is None and attemptCount < 3:
                         try:
                             replySplit = SantaReply(
-                                    SantaEmail(
-                                        *wipLetters[message.author.id]["letter_argv"]
-                                    )
-                                ).replyText.replace("\n", "\n> ")
+                                SantaEmail(
+                                    *wipLetters[message.author.id]["letter_argv"]
+                                )
+                            ).replyText.replace("\n", "\n> ")
                         except:
                             await message.channel.send(
                                 "> There was an issue sending your letter. Trying again..."
@@ -245,12 +253,20 @@ async def on_message(message):
 
                     readyToAddFinishedLetter = (
                         wipLetters[message.author.id]["replylocation"],
-                        "> **A letter from Santa for {}**".format(message.author.mention),
+                        "> **A letter from Santa for {}**".format(
+                            message.author.mention
+                        ),
                         replySplit,
-                        "> **End of letter from Santa for {}**".format(message.author.name),
+                        "> **End of letter from Santa for {}**".format(
+                            message.author.name
+                        ),
                     )
                     finishedLetters[message.author.id] = readyToAddFinishedLetter
-                    await message.channel.send("> Thank you. Your letter is now complete. Please wait in " + wipLetters[message.author.id]["receivinglocation"] + " for your letter to appear. It takes a bit for Santa to send many letters, so you might have to wait up to 5 minutes before you see your letter. Please be patient.")
+                    await message.channel.send(
+                        "> Thank you. Your letter is now complete. Please wait in "
+                        + wipLetters[message.author.id]["receivinglocation"]
+                        + " for your letter to appear. It takes a bit for Santa to send many letters, so you might have to wait up to 5 minutes before you see your letter. Please be patient."
+                    )
                     del wipLetters[message.author.id]
 
                 elif len(wipLetters[message.author.id]["letter_argv"]) == 9:
@@ -293,6 +309,7 @@ async def on_message(message):
                 await message.channel.send(
                     "> You haven't started an email to Santa yet! Go to a server with this bot and type `es!emailsanta`, or type it here to see Santa's reply here."
                 )
+
 
 if __name__ == "__main__":
     client.run(TOKEN)
