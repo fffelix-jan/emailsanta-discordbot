@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 print(
-    """Email Santa Discord Bot v. 1.0.0
+    """Email Santa Discord Bot v. 1.0.1
 Copyright (c) 2020 Félix An
 Licensed under the GNU AGPL 3.0"""
 )
@@ -39,7 +39,7 @@ async def clearOldLetters():
 
 
 # Task to send out finished emails to Santa (this ensures that two emails don't clash with each other)
-@tasks.loop()
+@tasks.loop(seconds=0.01, count=None)
 async def sendFinishedLetters():
     global finishedLetters
 
@@ -155,7 +155,7 @@ async def on_message(message):
         elif currentCommand == "about":
             await message.channel.send(
                 """> **Email Santa Bot**
-> Version 1.0.0
+> Version 1.0.1
 > Discord Bot by Félix An - <https://www.felixan.tk/> - Copyright © 2020 Félix An. Licensed under the GNU AGPL 3.0. Source code: <https://github.com/fffelix-jan/emailSanta-discordbot>
 > Uses the open source Python library "emailsanta", licensed under the GNU AGPL 3.0, also by Félix An: <https://github.com/fffelix-jan/emailsanta-py>
 > Replies provided by Alan Kerr's "emailSanta.com" - <https://www.emailsanta.com/> - Copyright © 1997-2020 emailSanta.com Inc.
